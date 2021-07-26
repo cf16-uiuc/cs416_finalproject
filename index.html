@@ -1,71 +1,165 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
-
-<!-- Load d3.js -->
-<script src="https://d3js.org/d3.v4.js"></script>
-
-<!-- Create a div where the graph will take place -->
-<div id="my_dataviz"></div>
-
-
-
-<script>
-
-
-// set the dimensions and margins of the graph
-var margin = {top: 20, right: 30, bottom: 100, left: 150},
-    width = 500 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
-
-// append the svg object to the body of the page
-var svg = d3.select("#my_dataviz")
-  .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
-
-// Parse the Data
-d3.csv("https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data/UTParkVisits.csv", function(data) {
-
-  // Add X axis
-  var x = d3.scaleLinear()
-    .domain([0, 120000000])
-    .range([ 0, width]);
-  svg.append("g")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(x))
-    .selectAll("text")
-      .attr("transform", "translate(-10,0)rotate(-45)")
-      .style("text-anchor", "end");
-
-  // Y axis
-  var y = d3.scaleBand()
-    .range([ 0, height ])
-    .domain(data.map(function(d) { return d.ParkName; }))
-    .padding(.1);
-  svg.append("g")
-    .call(d3.axisLeft(y))
-
-  //Bars
-  svg.selectAll("myRect")
-    .data(data)
-    .enter()
-    .append("rect")
-    .attr("x", x(0) )
-    .attr("y", function(d) { return y(d.ParkName); })
-    .attr("width", function(d) { return x(d.Visitors); })
-    .attr("height", y.bandwidth() )
-    .attr("fill", "#69b3a2")
-
-
-    // .attr("x", function(d) { return x(d.ParkName); })
-    // .attr("y", function(d) { return y(d.Visitors); })
-    // .attr("width", x.bandwidth())
-    // .attr("height", function(d) { return height - y(d.Value); })
-    // .attr("fill", "#69b3a2")
-
-})
-
-</script>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1894.6">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; color: #000000; -webkit-text-stroke: #000000; min-height: 14.0px}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; color: #000000; -webkit-text-stroke: #000000}
+    span.s1 {font-kerning: none}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
+<p class="p2"><span class="s1">&lt;meta charset="utf-8"&gt;</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1">&lt;!-- Load d3.js --&gt;</span></p>
+<p class="p2"><span class="s1">&lt;script src="https://d3js.org/d3.v4.js"&gt;&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1">&lt;!-- Create a div where the graph will take place --&gt;</span></p>
+<p class="p2"><span class="s1">&lt;div id="my_dataviz"&gt;&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1">&lt;html&gt;</span></p>
+<p class="p2"><span class="s1">&lt;body&gt;</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1">&lt;h2&gt;National Park Visitors&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1">&lt;button type="button" onclick="barChart()"&gt;1&lt;/button&gt;</span></p>
+<p class="p2"><span class="s1">&lt;button type="button" onclick="lineChart()"&gt;2&lt;/button&gt;</span></p>
+<p class="p2"><span class="s1">&lt;button type="button" onclick="myFunction()"&gt;3&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1">&lt;script&gt;</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1">function barChart(){</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1">// set the dimensions and margins of the graph</span></p>
+<p class="p2"><span class="s1">var margin = {top: 20, right: 30, bottom: 100, left: 150},</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>width = 500 - margin.left - margin.right,</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>height = 400 - margin.top - margin.bottom;</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1">// append the svg object to the body of the page</span></p>
+<p class="p2"><span class="s1">var svg = d3.select("#my_dataviz").html("")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span>.append("svg")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.attr("width", width + margin.left + margin.right)</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.attr("height", height + margin.top + margin.bottom)</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span>.append("g")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.attr("transform",</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">          </span>"translate(" + margin.left + "," + margin.top + ")");</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1">// Parse the Data</span></p>
+<p class="p2"><span class="s1">d3.csv("https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data/UTParkVisits.csv", function(data) {</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span>// Add X axis</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span>var x = d3.scaleLinear()</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.domain([0, 120000000])</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.range([ 0, width]);</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span>svg.append("g")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.attr("transform", "translate(0," + height + ")")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.call(d3.axisBottom(x))</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.selectAll("text")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span>.attr("transform", "translate(-10,0)rotate(-45)")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span>.style("text-anchor", "end");</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span>// Y axis</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span>var y = d3.scaleBand()</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.range([ 0, height ])</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.domain(data.map(function(d) { return d.ParkName; }))</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.padding(.1);</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span>svg.append("g")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.call(d3.axisLeft(y))</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span>//Bars</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span>svg.selectAll("myRect")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.data(data)</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.enter()</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.append("rect")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.attr("x", x(0) )</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.attr("y", function(d) { return y(d.ParkName); })</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.attr("width", function(d) { return x(d.Visitors); })</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.attr("height", y.bandwidth() )</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.attr("fill", "#69b3a2")</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>// .attr("x", function(d) { return x(d.ParkName); })</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>// .attr("y", function(d) { return y(d.Visitors); })</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>// .attr("width", x.bandwidth())</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>// .attr("height", function(d) { return height - y(d.Value); })</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>// .attr("fill", "#69b3a2")</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1">})</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1">}</span></p>
+<p class="p2"><span class="s1">&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1">&lt;script&gt;</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1">function lineChart(){</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span>// set the dimensions and margins of the graph</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span>var margin = {top: 10, right: 30, bottom: 30, left: 60},</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span>width = 460 - margin.left - margin.right,</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span>height = 400 - margin.top - margin.bottom;</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span>// append the svg object to the body of the page</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span>var svg = d3.select("#my_dataviz").html("")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.append("svg")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span>.attr("width", width + margin.left + margin.right)</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span>.attr("height", height + margin.top + margin.bottom)</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>.append("g")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span>.attr("transform",</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span>"translate(" + margin.left + "," + margin.top + ")");</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span>//Read the data</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span>d3.csv("https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data/visitor_year.csv",</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>// Now I can use this dataset:</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span>function(data) {</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span>// Add X axis --&gt; it is a date format</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span>var x = d3.scaleLinear()</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>.domain([1900, 2020])</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>.range([ 0, width ]);</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span>svg.append("g")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>.attr("transform", "translate(0," + height + ")")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>.call(d3.axisBottom(x));</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span>// Add Y axis</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span>var y = d3.scaleLog()</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>.domain( [30000, 1000000000])</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>.range([ height, 0 ]);</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span>svg.append("g")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>.call(d3.axisLeft(y));</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span>// Add the line</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span>svg.append("path")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>.datum(data)</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>.attr("fill", "none")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>.attr("stroke", "#69b3a2")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>.attr("stroke-width", 1.5)</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>.attr("d", d3.line()</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">          </span>.x(function(d) { return x(d.Year) })</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">          </span>.y(function(d) { return y(d.Visitors) })</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">          </span>)</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span>// Add the points</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">      </span>svg</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>.append("g")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>.selectAll("dot")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>.data(data)</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>.enter()</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span>.append("circle")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">          </span>.attr("cx", function(d) { return x(d.Year) } )</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">          </span>.attr("cy", function(d) { return y(d.Visitors) } )</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">          </span>.attr("r", 2)</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">          </span>.attr("fill", "#69b3a2")</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span>})</span></p>
+<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1">&lt;/script&gt;</span></p>
+<p class="p2"><span class="s1">&lt;script src="myScript.js"&gt;&lt;/script&gt;</span></p>
+<p class="p1"><span class="s1"></span><br></p>
+<p class="p2"><span class="s1">&lt;/body&gt;</span></p>
+<p class="p2"><span class="s1">&lt;/html&gt;</span></p>
+</body>
+</html>
