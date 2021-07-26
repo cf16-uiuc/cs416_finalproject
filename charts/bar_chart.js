@@ -1,16 +1,7 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
-
-<!-- Load d3.js -->
-<script src="https://d3js.org/d3.v4.js"></script>
-
-<!-- Create a div where the graph will take place -->
-<div id="my_dataviz"></div>
 
 
 
-<script>
-
+function barChart(){
 
 // set the dimensions and margins of the graph
 var margin = {top: 20, right: 30, bottom: 100, left: 150},
@@ -68,4 +59,5 @@ d3.csv("https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data
 
 })
 
-</script>
+}
+
