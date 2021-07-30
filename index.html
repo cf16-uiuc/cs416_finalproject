@@ -11,112 +11,22 @@
 
 <h2>National Park Visitors</h2>
 
-<p> As the COVID-19 pandemic has continued on, many Americans have seen the National Parks as a way to get out without engaging in high risk activity. Many Parks have been seeing a record number of visitors throughout the 2021 summer season. With that in mind, we'll take a look at how the number of visitors to US National Parks have increased from the early 1900s to 2016. From there we'll take a deeper look at specifically at National Parks in Utah, as the five Parks have become increasingly popular over the years. Finally we'll take a deep dive at some specific park that I'll specify when I know what I'm doing for the final visualization.</p>
+<p> As the COVID-19 pandemic has continued on, many Americans have seen the National Parks as a way to get out without engaging in high risk activity. Many Parks have been seeing a record number of visitors throughout the 2021 summer season, with the Utah National Parks, known as The Big 5, becoming increasingly popular. With that in mind, we'll take a look at how the number of visitors to Utah National Parks have increased from the early 1900s to 2016. From there we'll take a deeper look at how visitors to each individual park has changed from 2013 - 2016. Finally we'll take a deep dive at some specific park that I'll specify when I know what I'm doing for the final visualization.</p>
 
 <button type="button" onclick="lineChart()">1</button>
-<button type="button" onclick="barChart()">2</button>
-<button type="button" onclick="myFunction()">3</button>
+<button type="button" onclick="barChart('All')">2</button>
+<button type="button" onclick="testbarChart()">3</button>
 
 <div style="display:none;" id="viz_buttons">
-<button type="button" onclick="lineChart()">2013</button>
-<button type="button" onclick="barChart()">2014</button>
-<button type="button" onclick="myFunction()">2015</button>
-<button type="button" onclick="myFunction()">2016</button>
-<button type="button" onclick="myFunction()">All</button>
+<button type="button" onclick="barChart('2013')">2013</button>
+<button type="button" onclick="barChart('2014')">2014</button>
+<button type="button" onclick="barChart('2015')">2015</button>
+<button type="button" onclick="barChart('2016')">2016</button>
+<button type="button" onclick="barChart('All')">All</button>
 </div>
 
 <div id="my_dataviz"></div>
-<script>
 
-function barChart(){
-
-document.getElementById('viz_buttons').style.display = "block";
-
-const formater =  d3.format(',d');
-
-// set the dimensions and margins of the graph
-var margin = {top: 30, right: 30, bottom: 100, left: 150},
-    width = 500 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
-
-// append the svg object to the body of the page
-var svg = d3.select("#my_dataviz").html("")
-  .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
-
-// Parse the Data
-d3.csv("https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data/UTParkVisits.csv", function(data) {
-
-  // Add X axis
-  var x = d3.scaleLinear()
-    .domain([0, d3.max(data, function(d) { return +d.Visitors }) ])
-    .range([ 0, width]);
-  svg.append("g")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(x))
-    .selectAll("text")
-      .attr("transform", "translate(-10,0)rotate(-45)")
-      .style("text-anchor", "end");
-
-  // Y axis
-  var y = d3.scaleBand()
-    .range([ 0, height ])
-    .domain(data.map(function(d) { return d.ParkName; }))
-    .padding(.1);
-  svg.append("g")
-    .call(d3.axisLeft(y))
-    
-      
-  var Tooltip = d3.select("#my_dataviz")
-  .append("div")
-  .style("opacity", 0)
-  .attr("class", "tooltip")
-  .style("background-color", "white")
-  .style("border", "solid")
-  .style("border-width", "2px")
-  .style("border-radius", "5px")
-  .style("padding", "5px")
-
-  // Three function that change the tooltip when user hover / move / leave a cell
-  var mouseover = function(d) {
-    Tooltip
-      .style("opacity", 1)
-  }
-  var mousemove = function(d) {
-    Tooltip
-      .html("Total visitors to "+ d.ParkName +": " + formater(d.Visitors))
-      .style("left", (d3.mouse(this)[0]+70) + "px")
-      .style("top", (d3.mouse(this)[1]) + "px")
-  }
-  var mouseleave = function(d) {
-    Tooltip
-      .style("opacity", 0)
-  }    
-    
-
-  //Bars
-  svg.selectAll("myRect")
-    .data(data)
-    .enter()
-    .append("rect")
-    .attr("x", x(0) )
-    .attr("y", function(d) { return y(d.ParkName); })
-    .attr("width", function(d) { return x(d.Visitors); })
-    .attr("height", y.bandwidth() )
-    .attr("fill", "#69b3a2")
-    .on("mouseover", mouseover)
-    .on("mousemove", mousemove)
-    .on("mouseleave", mouseleave)
-
-
-})
-
-}
-</script>
 
 <script>
 
@@ -141,7 +51,7 @@ const formater =  d3.format(',d');
             "translate(" + margin.left + "," + margin.top + ")");
 
   //Read the data
-  d3.csv("https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data/visitor_year.csv",
+  d3.csv("https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data/annual_utah_visitors.csv",
 
     // Now I can use this dataset:
     function(data) {
@@ -168,7 +78,7 @@ const formater =  d3.format(',d');
           .x(function(d) { return x(d.Year) })
           .y(function(d) { return y(d.Visitors) })
           )
-          
+
       var Tooltip = d3.select("#my_dataviz")
       .append("div")
       .style("opacity", 0)
@@ -184,17 +94,19 @@ const formater =  d3.format(',d');
         Tooltip
           .style("opacity", 1)
       }
+
       var mousemove = function(d) {
         Tooltip
           .html("Total National Park Visitors in "+ d.Year +": " + formater(d.Visitors))
           .style("left", (d3.mouse(this)[0]+70) + "px")
           .style("top", (d3.mouse(this)[1]) + "px")
       }
+
       var mouseleave = function(d) {
         Tooltip
           .style("opacity", 0)
       }
-      
+
       // Add the points
       svg
         .append("g")
@@ -212,8 +124,111 @@ const formater =  d3.format(',d');
   })
   }
 
+
+function barChart(initVal){
+
+document.getElementById('viz_buttons').style.display = "block";
+
+// set the dimensions and margins of the graph
+var margin = {top: 30, right: 30, bottom: 70, left: 60},
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+var svg = d3.select("#my_dataviz").html("")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// Initialize the X axis
+var x = d3.scaleBand()
+  .range([ 0, width ])
+  .padding(0.2);
+var xAxis = svg.append("g")
+  .attr("transform", "translate(0," + height + ")")
+
+
+// Initialize the Y axis
+var y = d3.scaleLinear()
+  .range([ height, 0]);
+var yAxis = svg.append("g")
+  .attr("class", "myYaxis")
+
+
+// A function that create / update the plot for a given variable:
+function update(selectedVar) {
+
+  // Parse the Data
+  d3.csv("https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data/utah_park_visitors.csv", function(data) {
+
+    // X axis
+    x.domain(data.map(function(d) { return d.ParkName
+; }))
+    xAxis.transition().duration(1000).call(d3.axisBottom(x))
+
+    // Add Y axis
+    y.domain([0, d3.max(data, function(d) { return +d[selectedVar] }) ]);
+    yAxis.transition().duration(1000).call(d3.axisLeft(y));
+
+    // variable u: map data to existing bars
+    var u = svg.selectAll("rect")
+      .data(data)
+
+
+    var Tooltip = d3.select("#my_dataviz")
+  .append("div")
+  .style("opacity", 0)
+  .attr("class", "tooltip")
+  .style("background-color", "white")
+  .style("border", "solid")
+  .style("border-width", "2px")
+  .style("border-radius", "5px")
+  .style("padding", "5px")
+
+  // Three function that change the tooltip when user hover / move / leave a cell
+  var mouseover = function(d) {
+    Tooltip
+      .style("opacity", 1)
+  }
+  var mousemove = function(d) {
+    Tooltip
+      .html("Total visitors to "+ d.ParkName +": " + formater(d[selectedVar]))
+      .style("left", (d3.mouse(this)[0]+70) + "px")
+      .style("top", (d3.mouse(this)[1]) + "px")
+  }
+  var mouseleave = function(d) {
+    Tooltip
+      .style("opacity", 0)
+  }
+
+    // update bars
+    u
+      .enter()
+      .append("rect")
+      .merge(u)
+      .transition()
+      .duration(1000)
+        .attr("x", function(d) { return x(d.ParkName); })
+        .attr("y", function(d) { return y(d[selectedVar]); })
+        .attr("width", x.bandwidth())
+        .attr("height", function(d) { return height - y(d[selectedVar]); })
+        .attr("fill", "#69b3a2")
+        .on("mouseover", mouseover)
+        .on("mousemove", mousemove)
+        .on("mouseleave", mouseleave)
+  })
+
+}
+
+// Initialize plot
+update(initVal)
+
+}
+
 </script>
-<script src="myScript.js"></script>
 
 </body>
 </html>
