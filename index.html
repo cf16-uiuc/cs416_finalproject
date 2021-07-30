@@ -15,7 +15,7 @@
 
 <button type="button" onclick="lineChart()">1</button>
 <button type="button" onclick="barChart('All')">2</button>
-<button type="button" onclick="testbarChart()">3</button>
+<button type="button" onclick="barChart()">3</button>
 
 <div style="display:none;" id="viz_buttons">
 <button type="button" onclick="barChart('2013')">2013</button>
@@ -161,17 +161,19 @@ var yAxis = svg.append("g")
 // A function that create / update the plot for a given variable:
 function update(selectedVar) {
 
+	const formater =  d3.format(',d');
+
   // Parse the Data
   d3.csv("https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data/utah_park_visitors.csv", function(data) {
 
     // X axis
     x.domain(data.map(function(d) { return d.ParkName
 ; }))
-    xAxis.transition().duration(1000).call(d3.axisBottom(x))
+    xAxis.call(d3.axisBottom(x))
 
     // Add Y axis
     y.domain([0, d3.max(data, function(d) { return +d[selectedVar] }) ]);
-    yAxis.transition().duration(1000).call(d3.axisLeft(y));
+    yAxis.call(d3.axisLeft(y));
 
     // variable u: map data to existing bars
     var u = svg.selectAll("rect")
@@ -195,7 +197,7 @@ function update(selectedVar) {
   }
   var mousemove = function(d) {
     Tooltip
-      .html("Total visitors to "+ d.ParkName +": " + formater(d[selectedVar]))
+      .html("Total visitors at "+ d.ParkName +": " + formater(d[selectedVar]))
       .style("left", (d3.mouse(this)[0]+70) + "px")
       .style("top", (d3.mouse(this)[1]) + "px")
   }
@@ -205,12 +207,9 @@ function update(selectedVar) {
   }
 
     // update bars
-    u
-      .enter()
+    u.enter()
       .append("rect")
       .merge(u)
-      .transition()
-      .duration(1000)
         .attr("x", function(d) { return x(d.ParkName); })
         .attr("y", function(d) { return y(d[selectedVar]); })
         .attr("width", x.bandwidth())
@@ -218,8 +217,10 @@ function update(selectedVar) {
         .attr("fill", "#69b3a2")
         .on("mouseover", mouseover)
         .on("mousemove", mousemove)
-        .on("mouseleave", mouseleave)
-  })
+        .on("mouseleave", mouseleave);
+
+
+  	})
 
 }
 
