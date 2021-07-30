@@ -15,7 +15,7 @@
 
 <button type="button" onclick="lineChart()">1</button>
 <button type="button" onclick="barChart('All')">2</button>
-<button type="button" onclick="barChart()">3</button>
+<button type="button" onclick="barChart('2013')">3</button>
 
 <div style="display:none;" id="viz_buttons">
 <button type="button" onclick="barChart('2013')">2013</button>
@@ -78,7 +78,7 @@ const formater =  d3.format(',d');
           .x(function(d) { return x(d.Year) })
           .y(function(d) { return y(d.Visitors) })
           )
-
+          
       var Tooltip = d3.select("#my_dataviz")
       .append("div")
       .style("opacity", 0)
@@ -94,19 +94,19 @@ const formater =  d3.format(',d');
         Tooltip
           .style("opacity", 1)
       }
-
+      
       var mousemove = function(d) {
         Tooltip
-          .html("Total National Park Visitors in "+ d.Year +": " + formater(d.Visitors))
+          .html("Total Utah National Park Visitors in "+ d.Year +": " + formater(d.Visitors))
           .style("left", (d3.mouse(this)[0]+70) + "px")
           .style("top", (d3.mouse(this)[1]) + "px")
       }
-
+      
       var mouseleave = function(d) {
         Tooltip
           .style("opacity", 0)
       }
-
+      
       // Add the points
       svg
         .append("g")
@@ -149,7 +149,7 @@ var x = d3.scaleBand()
   .padding(0.2);
 var xAxis = svg.append("g")
   .attr("transform", "translate(0," + height + ")")
-
+  
 
 // Initialize the Y axis
 var y = d3.scaleLinear()
@@ -162,6 +162,7 @@ var yAxis = svg.append("g")
 function update(selectedVar) {
 
 	const formater =  d3.format(',d');
+    const percent_formater = d3.format(".0%")
 
   // Parse the Data
   d3.csv("https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data/utah_park_visitors.csv", function(data) {
@@ -178,8 +179,8 @@ function update(selectedVar) {
     // variable u: map data to existing bars
     var u = svg.selectAll("rect")
       .data(data)
-
-
+      
+    
     var Tooltip = d3.select("#my_dataviz")
   .append("div")
   .style("opacity", 0)
@@ -197,14 +198,14 @@ function update(selectedVar) {
   }
   var mousemove = function(d) {
     Tooltip
-      .html("Total visitors at "+ d.ParkName +": " + formater(d[selectedVar]))
+      .html("Total visitors at "+ d.ParkName +": " + formater(d[selectedVar]) + ". This accounts for " + percent_formater(d[selectedVar]/d3.sum(data, function(d) { return +d[selectedVar] })) + " of the total Utah Park visitors")
       .style("left", (d3.mouse(this)[0]+70) + "px")
       .style("top", (d3.mouse(this)[1]) + "px")
   }
   var mouseleave = function(d) {
     Tooltip
       .style("opacity", 0)
-  }
+  }    
 
     // update bars
     u.enter()
@@ -218,8 +219,8 @@ function update(selectedVar) {
         .on("mouseover", mouseover)
         .on("mousemove", mousemove)
         .on("mouseleave", mouseleave);
-
-
+        
+       
   	})
 
 }
