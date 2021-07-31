@@ -14,7 +14,9 @@
 
 <button type="button" onclick="lineChart()">1</button>
 <button type="button" onclick="barChart('All')">2</button>
-<button type="button" onclick="barChart('2013')">3</button>
+<button type="button" onclick="treeMap()">3</button>
+
+<div id="data_viz"></div>
 
 <div style="display:none;" id="viz_buttons">
 <button type="button" onclick="barChart('2013')">2013</button>
@@ -23,8 +25,6 @@
 <button type="button" onclick="barChart('2016')">2016</button>
 <button type="button" onclick="barChart('All')">2013-2016</button>
 </div>
-
-<div id="data_viz"></div>
 
 <!-- Text descriptions for the first visualization -->
 
@@ -260,6 +260,115 @@ function update(selectedVar) {
 // Initialize plot
 update(initVal)
 
+}
+
+
+
+function treeMap(){
+
+
+document.getElementById('viz_buttons').style.display = "none";
+
+document.getElementById('line_desc1').style.display = "none";
+document.getElementById('line_desc2').style.display = "none";
+document.getElementById('line_desc3').style.display = "none";
+
+document.getElementById('bar_desc1').style.display = "none";
+document.getElementById('bar_desc2').style.display = "none";
+
+
+const formater =  d3.format(',d');
+
+// set the dimensions and margins of the graph
+var margin = {top: 10, right: 10, bottom: 10, left: 10},
+  width = 445 - margin.left - margin.right,
+  height = 445 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+var svg = d3.select("#data_viz").html("")
+.append("svg")
+  .attr("width", width + margin.left + margin.right)
+  .attr("height", height + margin.top + margin.bottom)
+.append("g")
+  .attr("transform",
+        "translate(" + margin.left + "," + margin.top + ")");
+
+// Read data
+d3.csv('https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data/zion_monthly.csv', function(data) {
+
+  // stratify the data: reformatting for d3.js
+  var root = d3.stratify()
+    .id(function(d) { return d.Month; })   // Name of the entity (column name is name in csv)
+    .parentId(function(d) { return d.Parent; })   // Name of the parent (column name is parent in csv)
+    (data);
+  root.sum(function(d) { return +d.Visits })   // Compute the numeric value for each entity
+
+  // Then d3.treemap computes the position of each element of the hierarchy
+  // The coordinates are added to the root object above
+  d3.treemap()
+    .size([width, height])
+    .padding(4)
+    (root)
+    
+    
+  var Tooltip = d3.select("#data_viz")
+      .append("div")
+      .style("opacity", 0)
+      .attr("class", "tooltip")
+      .style("background-color", "white")
+      .style("border", "solid")
+      .style("border-width", "2px")
+      .style("border-radius", "5px")
+      .style("padding", "5px")
+
+      // Three function that change the tooltip when user hover / move / leave a cell
+      var mouseover = function(d) {
+        Tooltip
+          .style("opacity", 1)
+      }
+      
+      var mousemove = function(d) {
+        Tooltip
+          .html("Total Visitors in "+ d.data.Month +": " + 					formater(d.data.Visits))
+          .style("left", (d3.mouse(this)[0]+70) + "px")
+          .style("top", (d3.mouse(this)[1]) + "px")
+      }
+      
+      var mouseleave = function(d) {
+        Tooltip
+          .style("opacity", 0)
+      }
+
+console.log(root.leaves())
+  // use this information to add rectangles:
+  svg
+    .selectAll("rect")
+    .data(root.leaves())
+    .enter()
+    .append("rect")
+      .attr('x', function (d) { return d.x0; })
+      .attr('y', function (d) { return d.y0; })
+      .attr('width', function (d) { return d.x1 - d.x0; })
+      .attr('height', function (d) { return d.y1 - d.y0; })
+      .style("stroke", "black")
+      .style("fill", "#69b3a2")
+      .on("mouseover", mouseover)
+      .on("mousemove", mousemove)
+      .on("mouseleave", mouseleave);
+
+  // and to add the text labels
+  svg
+    .selectAll("text")
+    .data(root.leaves())
+    .enter()
+    .append("text")
+      .attr("x", function(d){ return d.x0+10})    // +10 to adjust position (more right)
+      .attr("y", function(d){ return d.y0+20})    // +20 to adjust position (lower)
+      .text(function(d){ return d.data.Month})
+      .attr("font-size", "15px")
+      .attr("fill", "white");
+      
+})
 }
 
 </script>
