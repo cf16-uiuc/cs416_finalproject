@@ -5,7 +5,6 @@
 <!-- Load d3.js -->
 <script src="https://d3js.org/d3.v4.js"></script>
 
-<!-- Create a div where the graph will take place -->
 <html>
 <body>
 
@@ -22,10 +21,26 @@
 <button type="button" onclick="barChart('2014')">2014</button>
 <button type="button" onclick="barChart('2015')">2015</button>
 <button type="button" onclick="barChart('2016')">2016</button>
-<button type="button" onclick="barChart('All')">All</button>
+<button type="button" onclick="barChart('All')">2013-2016</button>
 </div>
 
-<div id="my_dataviz"></div>
+<div id="data_viz"></div>
+
+<!-- Text descriptions for the first visualization -->
+
+<p style="display:none;" id="line_desc1"> In the above line chart we can see the total number of visitors to each of the five Utah National Parks from 1904 to 2016. While our data dates back to 1904, none of the five parks officially became National Parks until 1909, when Zion became a National Park. This resulted in visitation to the parks to nearly triple from 1909 to 1910. Bryce Canyon was added to the National Park system in 1923, Arches in 1929, Capitol Reef in 1937, and finally Canyonlands in 1964. Initially, some of these Parks were National Monuments and were given National Park status at a later time. But being added to the National Park system gave added visibiltiy to these five parks. </p>
+
+<p style="display:none;" id="line_desc2"> As we look at the growth of Utah Park visitation over the years, we can see a steady increase from the late 1950s up until the late 80s. From there the annual number of visitors started to steady a bit before beginning to climb again consistently since 2013.</p> 
+
+<p style="display:none;" id="line_desc3"> As you look at the chart feel free to hover over any point on the line to get a look at the exact number of visitors to the five parks for that year. After that, you can move on to the second chart where we take a bit of a more granular look at the number of visitors to each park. </p>
+
+<!-- Text descriptions for the second visualization -->
+
+<p style="display:none;" id="bar_desc1"> In the above bar chart we have the total number of visitors from 2013-2016. The chart begins looking at the four years in aggregate, but feel free to click through the indivudal years to see how park visitation changed throughout the years. You can also hover over the individual bars to see the total number of visitors for the specified year and what percentage of visitors in Utah that park makes up.</p>
+
+<p style="display:none;" id="bar_desc2"> As you navigate throuhg the four years, you'll begin to notice that while total number of visitors to the parks increases each year, the distribution between the five parks is roughly the same. Zion is by far the most popular of the parks, accounting for roughly 44% of visitors and Canyonlands is the least visited, making up just 8% of Utah National Park visitors. </p>
+
+
 
 
 <script>
@@ -34,15 +49,24 @@ function lineChart(){
 
 document.getElementById('viz_buttons').style.display = "none";
 
+document.getElementById('line_desc1').style.display = "block";
+document.getElementById('line_desc2').style.display = "block";
+document.getElementById('line_desc3').style.display = "block";
+
+document.getElementById('bar_desc1').style.display = "none";
+document.getElementById('bar_desc2').style.display = "none";
+
+
+
 const formater =  d3.format(',d');
 
   // set the dimensions and margins of the graph
-  var margin = {top: 30, right: 30, bottom: 30, left: 80},
+  var margin = {top: 50, right: 30, bottom: 30, left: 80},
       width = 500 - margin.left - margin.right,
       height = 400 - margin.top - margin.bottom;
 
   // append the svg object to the body of the page
-  var svg = d3.select("#my_dataviz").html("")
+  var svg = d3.select("#data_viz").html("")
     .append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -79,7 +103,7 @@ const formater =  d3.format(',d');
           .y(function(d) { return y(d.Visitors) })
           )
           
-      var Tooltip = d3.select("#my_dataviz")
+      var Tooltip = d3.select("#data_viz")
       .append("div")
       .style("opacity", 0)
       .attr("class", "tooltip")
@@ -116,7 +140,7 @@ const formater =  d3.format(',d');
         .append("circle")
         .attr("cx", function(d) { return x(d.Year) } )
         .attr("cy", function(d) { return y(d.Visitors) } )
-        .attr("r", 2)
+        .attr("r", 2.75)
         .attr("fill", "#69b3a2")
         .on("mouseover", mouseover)
         .on("mousemove", mousemove)
@@ -129,13 +153,21 @@ function barChart(initVal){
 
 document.getElementById('viz_buttons').style.display = "block";
 
+document.getElementById('line_desc1').style.display = "none";
+document.getElementById('line_desc2').style.display = "none";
+document.getElementById('line_desc3').style.display = "none";
+
+document.getElementById('bar_desc1').style.display = "block";
+document.getElementById('bar_desc2').style.display = "block";
+
+
 // set the dimensions and margins of the graph
 var margin = {top: 30, right: 30, bottom: 70, left: 60},
     width = 460 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
-var svg = d3.select("#my_dataviz").html("")
+var svg = d3.select("#data_viz").html("")
   .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
@@ -181,7 +213,7 @@ function update(selectedVar) {
       .data(data)
       
     
-    var Tooltip = d3.select("#my_dataviz")
+    var Tooltip = d3.select("#data_viz")
   .append("div")
   .style("opacity", 0)
   .attr("class", "tooltip")
