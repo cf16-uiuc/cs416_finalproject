@@ -5,12 +5,15 @@
 <!-- Load d3.js -->
 <script src="https://d3js.org/d3.v4.js"></script>
 
+<!-- Load d3-annotation -->
+<script src="https://rawgit.com/susielu/d3-annotation/master/d3-annotation.min.js"></script>
+
 <html>
 <body>
 
 <h2>National Park Visitors</h2>
 
-<p> As the COVID-19 pandemic has continued on, many Americans have seen the National Parks as a way to get out without engaging in high risk activity. Many Parks have been seeing a record number of visitors throughout the 2021 summer season, with the Utah National Parks, known as The Big 5, becoming increasingly popular. With that in mind, we'll take a look at how the number of visitors to Utah National Parks have increased from the early 1900s to 2016. From there we'll take a deeper look at how visitors to each individual park has changed from 2013 - 2016. Finally we'll take a deep dive at some specific park that I'll specify when I know what I'm doing for the final visualization.</p>
+<p> As the COVID-19 pandemic has continued on, many Americans have seen the National Parks as a way to get out without engaging in high risk activity. Many Parks have been seeing a record number of visitors throughout the 2021 summer season, with the Utah National Parks, known as The Big 5, becoming increasingly popular. With that in mind, we'll take a look at how the number of visitors to Utah National Parks have increased from the early 1900s to 2016. From there we'll take a deeper look at how visitors to each individual park has changed from 2013 - 2016. Finally we'll take a deep dive at Zion and see how the number of visitors to the park fluctuates throughout the year.</p>
 
 <button type="button" onclick="lineChart()">1</button>
 <button type="button" onclick="barChart('All')">2</button>
@@ -41,6 +44,13 @@
 <p style="display:none;" id="bar_desc2"> As you navigate throuhg the four years, you'll begin to notice that while total number of visitors to the parks increases each year, the distribution between the five parks is roughly the same. Zion is by far the most popular of the parks, accounting for roughly 44% of visitors and Canyonlands is the least visited, making up just 8% of Utah National Park visitors. </p>
 
 
+<!-- Text descriptions for the second visualization -->
+
+<p style="display:none;" id="tree_desc1"> The above tree map breaks down visitors to Zion National Park by month in 2016. We can see that the late spring through early fall is when a bulk of the visits occur. During the winter months the park sees very few visitors, going as low as just 1/6th of what the park sees during its peak month of July. </p>
+
+<p style="display:none;" id="tree_desc2"> Hover over the individual blocks to see the exact number of visitors to the park in each month.</p>
+
+
 
 
 <script>
@@ -55,6 +65,9 @@ document.getElementById('line_desc3').style.display = "block";
 
 document.getElementById('bar_desc1').style.display = "none";
 document.getElementById('bar_desc2').style.display = "none";
+
+document.getElementById('tree_desc1').style.display = "none";
+document.getElementById('tree_desc2').style.display = "none";
 
 
 
@@ -73,6 +86,43 @@ const formater =  d3.format(',d');
     .append("g")
       .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
+            
+   const annotations = [
+    {
+      note: {
+        label: "Steady increase of visitors"
+      },
+      x: 290,
+      y: 240,
+      dy: -70,
+      dx: -100,
+      color: "black"
+    },
+    
+    {
+      note: {
+        label: "Number of visitors steady"
+      },
+      x: 400,
+      y: 100,
+      dy: 70,
+      dx: 0,
+      color: "black"
+    }
+  ]
+
+  const makeAnnotations = d3.annotation()
+            .type(d3.annotationLabel)
+            .annotations(annotations)
+            
+  
+
+  d3.select("svg")
+    .append("g")
+    .attr("class", "annotation-group")
+    .call(makeAnnotations)
+            
+            
 
   //Read the data
   d3.csv("https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data/annual_utah_visitors.csv",
@@ -113,7 +163,7 @@ const formater =  d3.format(',d');
       .style("border-radius", "5px")
       .style("padding", "5px")
 
-      // Three function that change the tooltip when user hover / move / leave a cell
+      // Functions to change tool tip when hovering over, moving, and leaving location
       var mouseover = function(d) {
         Tooltip
           .style("opacity", 1)
@@ -122,8 +172,8 @@ const formater =  d3.format(',d');
       var mousemove = function(d) {
         Tooltip
           .html("Total Utah National Park Visitors in "+ d.Year +": " + formater(d.Visitors))
-          .style("left", (d3.mouse(this)[0]+70) + "px")
-          .style("top", (d3.mouse(this)[1]) + "px")
+          .style("left", (d3.event.pageX) + "px")
+          .style("top", (d3.event.pageY) + "px")
       }
       
       var mouseleave = function(d) {
@@ -159,6 +209,9 @@ document.getElementById('line_desc3').style.display = "none";
 
 document.getElementById('bar_desc1').style.display = "block";
 document.getElementById('bar_desc2').style.display = "block";
+
+document.getElementById('tree_desc1').style.display = "none";
+document.getElementById('tree_desc2').style.display = "none";
 
 
 // set the dimensions and margins of the graph
@@ -212,6 +265,29 @@ function update(selectedVar) {
     var u = svg.selectAll("rect")
       .data(data)
       
+      
+     const annotations = [
+  {
+    note: {
+      label: "Regardless of year, Zion has roughly double the visitors as the next busiest Utah National Park"
+    },
+    x: 370,
+    y: 180,
+    dy: -45,
+    dx: -100,
+    color: "black"
+  }
+]
+
+const makeAnnotations = d3.annotation()
+          .type(d3.annotationLabel)
+          .annotations(annotations)
+
+        d3.select("svg")
+          .append("g")
+          .attr("class", "annotation-group")
+          .call(makeAnnotations)
+      
     
     var Tooltip = d3.select("#data_viz")
   .append("div")
@@ -223,7 +299,7 @@ function update(selectedVar) {
   .style("border-radius", "5px")
   .style("padding", "5px")
 
-  // Three function that change the tooltip when user hover / move / leave a cell
+  // Functions to change tool tip when hovering over, moving, and leaving location
   var mouseover = function(d) {
     Tooltip
       .style("opacity", 1)
@@ -231,8 +307,8 @@ function update(selectedVar) {
   var mousemove = function(d) {
     Tooltip
       .html("Total visitors at "+ d.ParkName +": " + formater(d[selectedVar]) + ". This accounts for " + percent_formater(d[selectedVar]/d3.sum(data, function(d) { return +d[selectedVar] })) + " of the total Utah Park visitors")
-      .style("left", (d3.mouse(this)[0]+70) + "px")
-      .style("top", (d3.mouse(this)[1]) + "px")
+      .style("left", (d3.event.pageX)+ + "px")
+      .style("top", (d3.event.pageY) + "px")
   }
   var mouseleave = function(d) {
     Tooltip
@@ -252,13 +328,22 @@ function update(selectedVar) {
         .on("mousemove", mousemove)
         .on("mouseleave", mouseleave);
         
+    d3.select("#my_viz")
+  		.append("g")
+  		.call(makeAnnotations)
+        
        
   	})
+    
 
 }
 
 // Initialize plot
 update(initVal)
+
+
+
+
 
 }
 
@@ -276,12 +361,16 @@ document.getElementById('line_desc3').style.display = "none";
 document.getElementById('bar_desc1').style.display = "none";
 document.getElementById('bar_desc2').style.display = "none";
 
+document.getElementById('tree_desc1').style.display = "block";
+document.getElementById('tree_desc2').style.display = "block";
+
 
 const formater =  d3.format(',d');
 
+
 // set the dimensions and margins of the graph
-var margin = {top: 10, right: 10, bottom: 10, left: 10},
-  width = 445 - margin.left - margin.right,
+var margin = {top: 10, right: 150, bottom: 10, left: 10},
+  width = 650 - margin.left - margin.right,
   height = 445 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
@@ -292,6 +381,31 @@ var svg = d3.select("#data_viz").html("")
 .append("g")
   .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
+        
+        
+    const annotations = [
+    {
+      note: {
+        label: "The month of July is when the park sees the most visitors - nearly 600,000 in 2016."
+      },
+      x: 470,
+      y: 100,
+      dy: 0,
+      dx: 100,
+      color: "black"
+    }
+  ]
+
+  const makeAnnotations = d3.annotation()
+            .type(d3.annotationLabel)
+            .annotations(annotations)
+            
+  
+
+  d3.select("svg")
+    .append("g")
+    .attr("class", "annotation-group")
+    .call(makeAnnotations)
 
 // Read data
 d3.csv('https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data/zion_monthly.csv', function(data) {
@@ -321,7 +435,7 @@ d3.csv('https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data
       .style("border-radius", "5px")
       .style("padding", "5px")
 
-      // Three function that change the tooltip when user hover / move / leave a cell
+      // Functions to change tool tip when hovering over, moving, and leaving location
       var mouseover = function(d) {
         Tooltip
           .style("opacity", 1)
@@ -330,8 +444,8 @@ d3.csv('https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data
       var mousemove = function(d) {
         Tooltip
           .html("Total Visitors in "+ d.data.Month +": " + 					formater(d.data.Visits))
-          .style("left", (d3.mouse(this)[0]+70) + "px")
-          .style("top", (d3.mouse(this)[1]) + "px")
+          .style("left", (d3.event.pageX) + "px")
+          .style("top", (d3.event.pageY) + "px")
       }
       
       var mouseleave = function(d) {
