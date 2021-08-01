@@ -11,7 +11,7 @@
 <html>
 <body>
 
-<h2>National Park Visitors</h2>
+<h2>Utah National Park Visitors</h2>
 
 <p> As the COVID-19 pandemic has continued on, many Americans have seen the National Parks as a way to get out without engaging in high risk activity. Many Parks have been seeing a record number of visitors throughout the 2021 summer season, with the Utah National Parks, known as The Big 5, becoming increasingly popular. With that in mind, we'll take a look at how the number of visitors to Utah National Parks have increased from the early 1900s to 2016. From there we'll take a deeper look at how visitors to each individual park has changed from 2013 - 2016. Finally we'll take a deep dive at Zion and see how the number of visitors to the park fluctuates throughout the year.</p>
 
@@ -73,12 +73,12 @@ document.getElementById('tree_desc2').style.display = "none";
 
 const formater =  d3.format(',d');
 
-  // set the dimensions and margins of the graph
-  var margin = {top: 50, right: 30, bottom: 30, left: 80},
-      width = 500 - margin.left - margin.right,
-      height = 400 - margin.top - margin.bottom;
+  // set dimensions and margin for graph
+  var margin = {top: 50, right: 150, bottom: 30, left: 80},
+      width = 800 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
 
-  // append the svg object to the body of the page
+  // add svg object to page
   var svg = d3.select("#data_viz").html("")
     .append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -92,8 +92,8 @@ const formater =  d3.format(',d');
       note: {
         label: "Steady increase of visitors"
       },
-      x: 290,
-      y: 240,
+      x: 370,
+      y: 360,
       dy: -70,
       dx: -100,
       color: "black"
@@ -103,10 +103,21 @@ const formater =  d3.format(',d');
       note: {
         label: "Number of visitors steady"
       },
-      x: 400,
-      y: 100,
+      x: 550,
+      y: 130,
       dy: 70,
       dx: 0,
+      color: "black"
+    },
+    
+    {
+      note: {
+        label: "Annual visitors begin increasing again"
+      },
+      x: 635,
+      y: 80,
+      dy: 0,
+      dx: 100,
       color: "black"
     }
   ]
@@ -124,30 +135,30 @@ const formater =  d3.format(',d');
             
             
 
-  //Read the data
+  // Read in data
   d3.csv("https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data/annual_utah_visitors.csv",
 
-    // Now I can use this dataset:
     function(data) {
-      // Add X axis --> it is a date format
+      
+      // Create X axis
       var x = d3.scaleLinear()
         .domain([1900, 2020])
         .range([ 0, width ]);
       svg.append("g")
         .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(x).tickFormat(d3.format('')));
-      // Add Y axis
+      // Create Y axis
       var y = d3.scaleLinear()
         .domain( [0, d3.max(data, function(d) { return +d.Visitors }) ])
         .range([ height, 0 ]);
       svg.append("g")
         .call(d3.axisLeft(y));
-      // Add the line
+      // Add line
       svg.append("path")
         .datum(data)
         .attr("fill", "none")
-        .attr("stroke", "#69b3a2")
-        .attr("stroke-width", 1.5)
+        .attr("stroke", "#5499C7")
+        .attr("stroke-width", 1)
         .attr("d", d3.line()
           .x(function(d) { return x(d.Year) })
           .y(function(d) { return y(d.Visitors) })
@@ -190,8 +201,8 @@ const formater =  d3.format(',d');
         .append("circle")
         .attr("cx", function(d) { return x(d.Year) } )
         .attr("cy", function(d) { return y(d.Visitors) } )
-        .attr("r", 2.75)
-        .attr("fill", "#69b3a2")
+        .attr("r", 2.65)
+        .attr("fill", "#5499C7")
         .on("mouseover", mouseover)
         .on("mousemove", mousemove)
         .on("mouseleave", mouseleave)
@@ -214,10 +225,10 @@ document.getElementById('tree_desc1').style.display = "none";
 document.getElementById('tree_desc2').style.display = "none";
 
 
-// set the dimensions and margins of the graph
-var margin = {top: 30, right: 30, bottom: 70, left: 60},
+// set dimensions and margins for graph
+var margin = {top: 50, right: 30, bottom: 70, left: 60},
     width = 460 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+    height = 450 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
 var svg = d3.select("#data_viz").html("")
@@ -228,7 +239,7 @@ var svg = d3.select("#data_viz").html("")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
-// Initialize the X axis
+// Create X axis
 var x = d3.scaleBand()
   .range([ 0, width ])
   .padding(0.2);
@@ -236,20 +247,20 @@ var xAxis = svg.append("g")
   .attr("transform", "translate(0," + height + ")")
   
 
-// Initialize the Y axis
+// Create Y axis
 var y = d3.scaleLinear()
   .range([ height, 0]);
 var yAxis = svg.append("g")
   .attr("class", "myYaxis")
 
 
-// A function that create / update the plot for a given variable:
+// A function to create and update the chart
 function update(selectedVar) {
 
 	const formater =  d3.format(',d');
     const percent_formater = d3.format(".0%")
 
-  // Parse the Data
+  // Read in data
   d3.csv("https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data/utah_park_visitors.csv", function(data) {
 
     // X axis
@@ -257,21 +268,21 @@ function update(selectedVar) {
 ; }))
     xAxis.call(d3.axisBottom(x))
 
-    // Add Y axis
+    // Y axis
     y.domain([0, d3.max(data, function(d) { return +d[selectedVar] }) ]);
     yAxis.call(d3.axisLeft(y));
 
-    // variable u: map data to existing bars
+    // Map data to bars
     var u = svg.selectAll("rect")
       .data(data)
       
-      
+    // add annotations  
      const annotations = [
   {
     note: {
       label: "Regardless of year, Zion has roughly double the visitors as the next busiest Utah National Park"
     },
-    x: 370,
+    x: 360,
     y: 180,
     dy: -45,
     dx: -100,
@@ -323,7 +334,7 @@ const makeAnnotations = d3.annotation()
         .attr("y", function(d) { return y(d[selectedVar]); })
         .attr("width", x.bandwidth())
         .attr("height", function(d) { return height - y(d[selectedVar]); })
-        .attr("fill", "#69b3a2")
+        .attr("fill", "#5499C7")
         .on("mouseover", mouseover)
         .on("mousemove", mousemove)
         .on("mouseleave", mouseleave);
@@ -368,12 +379,12 @@ document.getElementById('tree_desc2').style.display = "block";
 const formater =  d3.format(',d');
 
 
-// set the dimensions and margins of the graph
-var margin = {top: 10, right: 150, bottom: 10, left: 10},
+// set dimesnions for margins and cahrts
+var margin = {top: 150, right: 150, bottom: 10, left: 10},
   width = 650 - margin.left - margin.right,
-  height = 445 - margin.top - margin.bottom;
+  height = 650 - margin.top - margin.bottom;
 
-// append the svg object to the body of the page
+// add svg to body
 var svg = d3.select("#data_viz").html("")
 .append("svg")
   .attr("width", width + margin.left + margin.right)
@@ -388,12 +399,25 @@ var svg = d3.select("#data_viz").html("")
       note: {
         label: "The month of July is when the park sees the most visitors - nearly 600,000 in 2016."
       },
-      x: 470,
-      y: 100,
+      x: 490,
+      y: 200,
       dy: 0,
-      dx: 100,
+      dx: 90,
+      color: "black"
+    },
+    
+    {
+    
+    note: {
+        label: "The month of January is when the park sees the least visitors - less than 85,000 in 2016."
+      },
+      x: 80,
+      y: 160,
+      dy: -30,
+      dx: 0,
       color: "black"
     }
+    
   ]
 
   const makeAnnotations = d3.annotation()
@@ -410,15 +434,13 @@ var svg = d3.select("#data_viz").html("")
 // Read data
 d3.csv('https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data/zion_monthly.csv', function(data) {
 
-  // stratify the data: reformatting for d3.js
+  // stratify data
   var root = d3.stratify()
-    .id(function(d) { return d.Month; })   // Name of the entity (column name is name in csv)
-    .parentId(function(d) { return d.Parent; })   // Name of the parent (column name is parent in csv)
+    .id(function(d) { return d.Month; })   
+    .parentId(function(d) { return d.Parent; })  
     (data);
-  root.sum(function(d) { return +d.Visits })   // Compute the numeric value for each entity
-
-  // Then d3.treemap computes the position of each element of the hierarchy
-  // The coordinates are added to the root object above
+  root.sum(function(d) { return +d.Visits })   
+  
   d3.treemap()
     .size([width, height])
     .padding(4)
@@ -454,7 +476,7 @@ d3.csv('https://raw.githubusercontent.com/cf16-uiuc/cs416_finalproject/main/data
       }
 
 console.log(root.leaves())
-  // use this information to add rectangles:
+  // add rectangles
   svg
     .selectAll("rect")
     .data(root.leaves())
@@ -465,19 +487,19 @@ console.log(root.leaves())
       .attr('width', function (d) { return d.x1 - d.x0; })
       .attr('height', function (d) { return d.y1 - d.y0; })
       .style("stroke", "black")
-      .style("fill", "#69b3a2")
+      .style("fill", "#5499C7")
       .on("mouseover", mouseover)
       .on("mousemove", mousemove)
       .on("mouseleave", mouseleave);
 
-  // and to add the text labels
+  // add text labels
   svg
     .selectAll("text")
     .data(root.leaves())
     .enter()
     .append("text")
-      .attr("x", function(d){ return d.x0+10})    // +10 to adjust position (more right)
-      .attr("y", function(d){ return d.y0+20})    // +20 to adjust position (lower)
+      .attr("x", function(d){ return d.x0+10})   
+      .attr("y", function(d){ return d.y0+20})    
       .text(function(d){ return d.data.Month})
       .attr("font-size", "15px")
       .attr("fill", "white");
